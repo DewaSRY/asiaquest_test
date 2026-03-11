@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import StatusChip from "~/components/ui/StatusChip.vue";
 import type { Claim } from "~/shared/types";
 
 defineProps<{

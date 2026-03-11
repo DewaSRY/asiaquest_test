@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <AppBar :user="currentUser" :show-menu="true" @toggle-drawer="drawer = !drawer" />
-
-    <SideNav
-      v-model="drawer"
-      :rail="rail"
-      :user-role="userRole"
-      @update:rail="rail = $event"
-    />
-
-    <v-main>
-      <v-container fluid class="pa-6">
+  <v-container fluid class="pa-6">
         <div class="d-flex justify-space-between align-center mb-6">
           <div>
             <h1 class="text-h4 font-weight-bold">Claims for Approval</h1>
@@ -96,29 +85,27 @@
           @view="handleViewClaim"
           @update:page="page = $event"
         />
-      </v-container>
-    </v-main>
-
     <!-- Snackbar -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
       {{ snackbar.message }}
     </v-snackbar>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import type { Claim, ClaimStatus } from "~/shared/types";
+import ClaimsTable from "~/components/tabledata/ClaimsTable.vue";
+import { useClaims } from "~/composables/useClaims";
+import { useRouter } from "vue-router";
 
 definePageMeta({
+   layout: "dashboard",
   middleware: ["auth", "approver"],
 });
 
-const { currentUser, userRole } = useAuth();
 const { getClaims } = useClaims();
 const router = useRouter();
 
-const drawer = ref(true);
-const rail = ref(false);
 const loading = ref(false);
 const statusFilter = ref<ClaimStatus | "all">("REVIEWED");
 const page = ref(1);

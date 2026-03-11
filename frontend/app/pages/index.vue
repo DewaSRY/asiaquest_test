@@ -138,10 +138,6 @@
 <script setup lang="ts">
 import type { LoginInput, RegisterInput } from "~/shared/types";
 
-definePageMeta({
-  layout: false,
-});
-
 const { login, register, currentUser, userRole } = useAuth();
 const router = useRouter();
 

@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <AppBar :user="currentUser" :show-menu="true" @toggle-drawer="drawer = !drawer" />
-
-    <SideNav
-      v-model="drawer"
-      :rail="rail"
-      :user-role="userRole"
-      @update:rail="rail = $event"
-    />
-
-    <v-main>
-      <v-container fluid class="pa-6">
+  <v-container fluid class="pa-6">
         <!-- Header with Back Button -->
         <div class="d-flex align-center mb-6">
           <v-btn
@@ -61,9 +50,6 @@
         <v-alert v-else type="error" variant="tonal">
           Claim not found
         </v-alert>
-      </v-container>
-    </v-main>
-
     <!-- Snackbar -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
       {{ snackbar.message }}
@@ -91,31 +77,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import type { Claim, UpdateClaimInput } from "~/shared/types";
-import AppBar from "~/components/ui/AppBar.vue";
-import SideNav from "~/components/ui/SideNav.vue";
 import StatusChip from "~/components/ui/StatusChip.vue";
 import ClaimForm from "~/components/form/ClaimForm.vue";
 import ClaimDetailView from "~/components/pages/ClaimDetailView.vue";
-import { useAuth } from "~/composables/useAuth";
 import { useClaims } from "~/composables/useClaims";
 import { useRouter, useRoute } from "vue-router";
 
 definePageMeta({
+  layout: "dashboard",
   middleware: ["auth"],
 });
 
 const route = useRoute();
 const router = useRouter();
-const { currentUser, userRole } = useAuth();
 const { getClaim, updateClaim, submitClaim } = useClaims();
-
-const drawer = ref(true);
-const rail = ref(false);
 const loading = ref(false);
 const saving = ref(false);
 const submitting = ref(false);

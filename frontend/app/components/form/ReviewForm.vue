@@ -58,7 +58,7 @@ const handleSubmit = async () => {
   const { valid } = await formRef.value?.validate();
   if (!valid) return;
 
-  emit("submit", { review_summary: reviewSummary.value });
+  emit("submit", { summary: reviewSummary.value });
   reviewSummary.value = "";
 };
 </script>

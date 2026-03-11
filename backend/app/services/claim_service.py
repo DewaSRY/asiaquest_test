@@ -179,7 +179,7 @@ async def review_claim(
     review = ClaimReview(
         claim_id=claim.id,
         verifier_id=verifier.id,
-        review_summary=data.review_summary,
+        summary=data.summary,
         reviewed_at=datetime.utcnow(),
     )
     db.add(review)

@@ -45,7 +45,7 @@ class ClaimReviewCreate(BaseModel):
 class ClaimApprovalCreate(BaseModel):
     """DTO for approver to approve/reject a claim."""
     decision: ApprovalDecision
-    summary: str | None = Field(None, description="Reason for decision (required for rejection)")
+    summary: str | None = Field(None, description="Summary for decision (required for rejection)")
 
 
 # ============ Response DTOs ============
@@ -55,7 +55,7 @@ class ClaimReviewResponse(BaseModel):
     id: int
     claim_id: int
     verifier_id: int
-    review_summary: str
+    summary: str
     reviewed_at: datetime
     
     class Config:
@@ -68,7 +68,7 @@ class ClaimApprovalResponse(BaseModel):
     claim_id: int
     approver_id: int
     decision: ApprovalDecision
-    reason: str | None
+    summary: str | None
     decided_at: datetime
     
     class Config:

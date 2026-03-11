@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <AppBar :user="currentUser" :show-menu="true" @toggle-drawer="drawer = !drawer" />
-
-    <SideNav
-      v-model="drawer"
-      :rail="rail"
-      :user-role="userRole"
-      @update:rail="rail = $event"
-    />
-
-    <v-main>
-      <v-container fluid class="pa-6">
+  <v-container fluid class="pa-6">
         <div class="d-flex justify-space-between align-center mb-6">
           <div>
             <h1 class="text-h4 font-weight-bold">My Claims</h1>
@@ -107,9 +96,6 @@
           @view="handleViewClaim"
           @update:page="page = $event"
         />
-      </v-container>
-    </v-main>
-
     <!-- Insurance Select Modal -->
     <InsuranceSelectModal
       v-model="showInsuranceModal"
@@ -122,7 +108,7 @@
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="3000">
       {{ snackbar.message }}
     </v-snackbar>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -132,16 +118,13 @@ import ClaimsTable from '~/components/tabledata/ClaimsTable.vue';
 
 
 definePageMeta({
+  layout: "dashboard",
   middleware: ["auth"],
 });
 
-const { currentUser, userRole } = useAuth();
 const { getClaims, createClaim } = useClaims();
 const { getInsurances } = useInsurance();
 const router = useRouter();
-
-const drawer = ref(true);
-const rail = ref(false);
 const loading = ref(false);
 const loadingInsurances = ref(false);
 const showInsuranceModal = ref(false);

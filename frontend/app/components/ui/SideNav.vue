@@ -26,12 +26,24 @@
           title="Collapse Menu"
           @click="$emit('update:rail', !rail)"
         />
+        <v-list-item
+          prepend-icon="mdi-logout"
+          title="Logout"
+          color="error"
+          @click="handleLogout"
+        />
       </v-list>
     </template>
   </v-navigation-drawer>
 </template>
 
 <script setup lang="ts">
+const { logout } = useAuth();
+
+const handleLogout = () => {
+  logout();
+};
+
 const props = defineProps<{
   modelValue: boolean;
   rail: boolean;

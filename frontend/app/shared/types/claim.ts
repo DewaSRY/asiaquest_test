@@ -101,7 +101,7 @@ export type PaginatedClaims = z.infer<typeof paginatedClaimsSchema>;
 
 // Review claim input
 export const reviewClaimSchema = z.object({
-  review_summary: z.string().min(10, "Review summary must be at least 10 characters"),
+  summary: z.string().min(10, "Review summary must be at least 10 characters"),
 });
 
 export type ReviewClaimInput = z.infer<typeof reviewClaimSchema>;

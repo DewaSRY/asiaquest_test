@@ -33,9 +33,17 @@ async def get_claim_by_id(
     db: AsyncSession,
     claim_id: int,
     with_relations: bool = False,
+    include_history: bool = False,
 ) -> ClaimInsurance | None:
-    """Get claim by ID, optionally with review and approval."""
+    """Get claim by ID, optionally with review and approval.
+    
+    By default returns only the latest version. Set include_history=True to get any version.
+    """
     query = select(ClaimInsurance).where(ClaimInsurance.id == claim_id)
+    
+    # By default, only return latest version unless explicitly requesting history
+    if not include_history:
+        query = query.where(ClaimInsurance.latest == True)
     
     if with_relations:
         query = query.options(
@@ -51,9 +59,17 @@ async def get_claim_by_number(
     db: AsyncSession,
     claim_number: str,
     with_relations: bool = False,
+    include_history: bool = False,
 ) -> ClaimInsurance | None:
-    """Get claim by claim number."""
+    """Get claim by claim number.
+    
+    By default returns only the latest version. Set include_history=True to get any version.
+    """
     query = select(ClaimInsurance).where(ClaimInsurance.claim_number == claim_number)
+    
+    # By default, only return latest version
+    if not include_history:
+        query = query.where(ClaimInsurance.latest == True)
     
     if with_relations:
         query = query.options(
@@ -76,6 +92,7 @@ async def create_claim(
         user_id=user.id,
         insurance_id=data.insurance_id,
         status=ClaimStatus.DRAFT,
+        latest=True,
     )
     
     db.add(claim)
@@ -92,11 +109,25 @@ async def update_claim(
     claim_id: int,
     data: ClaimUpdate,
 ) -> ClaimInsurance:
-    """Update a draft claim. Only owner can update, only DRAFT status allowed."""
-    claim = await get_claim_by_id(db, claim_id, with_relations=True)
+    """Update a draft claim with history tracking.
+    
+    Instead of updating in place, this creates a new version:
+    1. Mark the current record as latest=False
+    2. Create a new record with merged data and latest=True
+    
+    Only owner can update, only DRAFT status allowed.
+    """
+    # Get the current latest version (include_history=True to get by exact ID)
+    claim = await get_claim_by_id(db, claim_id, with_relations=True, include_history=True)
     
     if not claim:
         raise NotFoundException(detail="Claim not found")
+    
+    # Ensure we're working with the latest version
+    if not claim.latest:
+        raise BadRequestException(
+            detail="Cannot update a historical version of a claim. Please update the latest version."
+        )
     
     # Only owner can update their claim
     if claim.user_id != user.id:
@@ -108,16 +139,49 @@ async def update_claim(
             detail=f"Cannot update claim with status '{claim.status.value}'. Only DRAFT claims can be updated."
         )
     
-    # Update fields
+    # Get update data
     update_data = data.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(claim, field, value)
     
+    # If no fields to update, return the current claim
+    if not update_data:
+        return claim
+    
+    # Mark the current record as not latest (historical)
+    claim.latest = False
+    
+    # Create a new record with merged data
+    new_claim = ClaimInsurance(
+        claim_number=claim.claim_number,
+        user_id=claim.user_id,
+        insurance_id=claim.insurance_id,
+        status=claim.status,
+        latest=True,
+        # Copy existing data
+        claim_date=claim.claim_date,
+        claim_type=claim.claim_type,
+        description=claim.description,
+        claim_amount=claim.claim_amount,
+        first_name=claim.first_name,
+        last_name=claim.last_name,
+        email=claim.email,
+        phone_number=claim.phone_number,
+        user_id_number=claim.user_id_number,
+        policy_number=claim.policy_number,
+        policy_holder_number=claim.policy_holder_number,
+        coverage_start_date=claim.coverage_start_date,
+        coverage_end_date=claim.coverage_end_date,
+    )
+    
+    # Apply updates to the new record
+    for field, value in update_data.items():
+        setattr(new_claim, field, value)
+    
+    db.add(new_claim)
     await db.flush()
     
     # Reload with relationships
-    claim = await get_claim_by_id(db, claim.id, with_relations=True)
-    return claim
+    new_claim = await get_claim_by_id(db, new_claim.id, with_relations=True)
+    return new_claim
 
 
 async def submit_claim(
@@ -250,12 +314,17 @@ async def list_claims(
     List claims with pagination.
     - Users see only their own claims
     - Verifiers/Approvers see all claims
+    - Only shows latest versions (historical records are hidden)
     """
     query = select(ClaimInsurance).options(
         selectinload(ClaimInsurance.review),
         selectinload(ClaimInsurance.approval),
     )
     count_query = select(func.count(ClaimInsurance.id))
+    
+    # Filter to only show latest versions
+    query = query.where(ClaimInsurance.latest == True)
+    count_query = count_query.where(ClaimInsurance.latest == True)
     
     # Filter by user role
     if user.role == UserRole.USER:

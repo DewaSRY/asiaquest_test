@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import String, DateTime, Enum as SQLEnum, Text, Numeric, Date, ForeignKey, BigInteger
+from sqlalchemy import String, DateTime, Enum as SQLEnum, Text, Numeric, Date, ForeignKey, BigInteger, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -20,12 +20,15 @@ class ClaimInsurance(Base):
     __tablename__ = "claim_insurances"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    claim_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    claim_number: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
     insurance_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("insurance.id"), nullable=False)
     status: Mapped[ClaimStatus] = mapped_column(
         SQLEnum(ClaimStatus), default=ClaimStatus.DRAFT, nullable=False
     )
+    
+    # History tracking: only the latest version has latest=True
+    latest: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
 
     # Claim details
     claim_date: Mapped[datetime | None] = mapped_column(Date, nullable=True)

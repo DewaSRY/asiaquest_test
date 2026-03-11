@@ -28,4 +28,7 @@ seed:
 seed-fresh:
 	python -m tools.seeder --clear
 
-.PHONY: env run dev install migrate migrate-create migrate-up migrate-down test seed seed-fresh
+clear-codebase:
+	find . -type d -name "__pycache__" -exec rm -r {} +
+
+.PHONY: env run dev install migrate migrate-create migrate-up migrate-down test seed seed-fresh clear-codebase

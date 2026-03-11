@@ -7,8 +7,8 @@ from app.database import Base
 
 class ApprovalDecision(str, Enum):
     """Approval decision enum."""
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
 
 
 class ClaimApproval(Base):

@@ -7,11 +7,11 @@ from app.database import Base
 
 class ClaimStatus(str, Enum):
     """Claim status enum."""
-    DRAFT = "draft"
-    SUBMITTED = "submitted"
-    REVIEWED = "reviewed"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    REVIEWED = "REVIEWED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
 
 
 class ClaimInsurance(Base):
@@ -22,7 +22,7 @@ class ClaimInsurance(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     claim_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
-    insurance_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("insurances.id"), nullable=False)
+    insurance_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("insurance.id"), nullable=False)
     status: Mapped[ClaimStatus] = mapped_column(
         SQLEnum(ClaimStatus), default=ClaimStatus.DRAFT, nullable=False
     )

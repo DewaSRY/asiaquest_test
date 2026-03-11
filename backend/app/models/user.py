@@ -7,9 +7,9 @@ from app.database import Base
 
 class UserRole(str, Enum):
     """User role enum."""
-    USER = "user"
-    VERIFIER = "verifier"
-    APPROVER = "approver"
+    USER = "USER"
+    VERIFIER = "VERIFIER"
+    APPROVER = "APPROVER"
 
 
 class User(Base):

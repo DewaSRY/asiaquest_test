@@ -125,8 +125,8 @@ class ClaimListResponse(BaseModel):
 class ClaimStatusFilter(str, Enum):
     """Filter options for claim status."""
     ALL = "all"
-    DRAFT = "draft"
-    SUBMITTED = "submitted"
-    REVIEWED = "reviewed"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    REVIEWED = "REVIEWED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"

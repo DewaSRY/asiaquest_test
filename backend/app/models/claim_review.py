@@ -14,7 +14,7 @@ class ClaimReview(Base):
         BigInteger, ForeignKey("claim_insurances.id"), nullable=False, unique=True
     )
     verifier_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
-    review_summary: Mapped[str] = mapped_column(Text, nullable=False)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
     reviewed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships

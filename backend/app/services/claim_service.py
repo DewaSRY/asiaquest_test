@@ -173,7 +173,7 @@ async def review_claim(
     review = ClaimReview(
         claim_id=claim.id,
         verifier_id=verifier.id,
-        review_summary=data.review_summary,
+        summary=data.summary,
         reviewed_at=datetime.utcnow(),
     )
     db.add(review)
@@ -207,16 +207,16 @@ async def approve_claim(
             detail=f"Cannot approve/reject claim with status '{claim.status.value}'. Only REVIEWED claims can be approved/rejected."
         )
     
-    # Require reason for rejection
-    if data.decision == ApprovalDecision.REJECTED and not data.reason:
-        raise BadRequestException(detail="Reason is required for rejection")
+    # Require summary for rejection
+    if data.decision == ApprovalDecision.REJECTED and not data.summary:
+        raise BadRequestException(detail="Summary is required for rejection")
     
     # Create approval record
     approval = ClaimApproval(
         claim_id=claim.id,
         approver_id=approver.id,
         decision=data.decision,
-        reason=data.reason,
+        summary=data.summary,
         decided_at=datetime.utcnow(),
     )
     db.add(approval)

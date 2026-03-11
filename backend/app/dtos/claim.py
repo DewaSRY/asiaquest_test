@@ -39,13 +39,13 @@ class ClaimUpdate(BaseModel):
 
 class ClaimReviewCreate(BaseModel):
     """DTO for verifier to review a claim."""
-    review_summary: str = Field(..., min_length=10, description="Review summary by verifier")
+    summary: str = Field(..., min_length=10, description="Review summary by verifier")
 
 
 class ClaimApprovalCreate(BaseModel):
     """DTO for approver to approve/reject a claim."""
     decision: ApprovalDecision
-    reason: str | None = Field(None, description="Reason for decision (required for rejection)")
+    summary: str | None = Field(None, description="Reason for decision (required for rejection)")
 
 
 # ============ Response DTOs ============

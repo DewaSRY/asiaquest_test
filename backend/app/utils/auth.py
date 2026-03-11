@@ -1,6 +1,6 @@
 from typing import Callable
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -8,22 +8,22 @@ from app.models.user import User, UserRole
 from app.services.auth_service import get_current_user
 from app.errors import ForbiddenException
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+bearer_scheme = HTTPBearer()
 
 
 async def require_auth(
-    token: str = Depends(oauth2_scheme),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
-    return await get_current_user(db, token)
+    return await get_current_user(db, credentials.credentials)
 
 
 # def require_role(role: UserRole) -> Callable:
 #     async def role_checker(
-#         token: str = Depends(oauth2_scheme),
+#         credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 #         db: AsyncSession = Depends(get_db),
 #     ) -> User:
-#         user = await get_current_user(db, token)
+#         user = await get_current_user(db, credentials.credentials)
 #         if user.role != role:
 #             raise ForbiddenException(
 #                 detail=f"Access denied. Required role: {role.value}"
@@ -35,10 +35,10 @@ async def require_auth(
 
 def require_roles(roles: list[UserRole]) -> Callable:
     async def roles_checker(
-        token: str = Depends(oauth2_scheme),
+        credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
         db: AsyncSession = Depends(get_db),
     ) -> User:
-        user = await get_current_user(db, token)
+        user = await get_current_user(db, credentials.credentials)
         if user.role not in roles:
             allowed = ", ".join([r.value for r in roles])
             raise ForbiddenException(

@@ -22,7 +22,7 @@ class ClaimApproval(Base):
     )
     approver_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
     decision: Mapped[ApprovalDecision] = mapped_column(SQLEnum(ApprovalDecision), nullable=False)
-    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
     decided_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     # Relationships

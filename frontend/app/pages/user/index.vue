@@ -126,7 +126,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Claim, Insurance, ClaimStatus } from "~/shared/types";
+import type{ ClaimStatus , Claim, Insurance } from '~/shared/types';
+import InsuranceSelectModal from "~/components/form/InsuranceSelectModal.vue";
+import ClaimsTable from '~/components/tabledata/ClaimsTable.vue';
+
 
 definePageMeta({
   middleware: ["auth"],

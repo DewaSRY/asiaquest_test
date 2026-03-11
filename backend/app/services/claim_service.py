@@ -80,7 +80,9 @@ async def create_claim(
     
     db.add(claim)
     await db.flush()
-    await db.refresh(claim)
+    
+    # Reload with relationships to avoid lazy loading issues
+    claim = await get_claim_by_id(db, claim.id, with_relations=True)
     return claim
 
 
@@ -112,7 +114,9 @@ async def update_claim(
         setattr(claim, field, value)
     
     await db.flush()
-    await db.refresh(claim)
+    
+    # Reload with relationships
+    claim = await get_claim_by_id(db, claim.id, with_relations=True)
     return claim
 
 
@@ -145,7 +149,9 @@ async def submit_claim(
     
     claim.status = ClaimStatus.SUBMITTED
     await db.flush()
-    await db.refresh(claim)
+    
+    # Reload with relationships
+    claim = await get_claim_by_id(db, claim.id, with_relations=True)
     return claim
 
 
@@ -173,7 +179,7 @@ async def review_claim(
     review = ClaimReview(
         claim_id=claim.id,
         verifier_id=verifier.id,
-        summary=data.summary,
+        review_summary=data.review_summary,
         reviewed_at=datetime.utcnow(),
     )
     db.add(review)
@@ -207,9 +213,9 @@ async def approve_claim(
             detail=f"Cannot approve/reject claim with status '{claim.status.value}'. Only REVIEWED claims can be approved/rejected."
         )
     
-    # Require summary for rejection
+    # Require reason for rejection
     if data.decision == ApprovalDecision.REJECTED and not data.summary:
-        raise BadRequestException(detail="Summary is required for rejection")
+        raise BadRequestException(detail="Reason is required for rejection")
     
     # Create approval record
     approval = ClaimApproval(

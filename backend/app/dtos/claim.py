@@ -80,7 +80,7 @@ class ClaimResponse(BaseModel):
     id: int
     claim_number: str
     user_id: int
-    process_id: int
+    insurance_id: int
     status: ClaimStatus
     
     # User info

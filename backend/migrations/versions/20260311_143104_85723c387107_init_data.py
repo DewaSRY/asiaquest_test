@@ -1,8 +1,8 @@
-"""init
+"""init_data
 
-Revision ID: c0ebe140223c
+Revision ID: 85723c387107
 Revises: 
-Create Date: 2026-03-11 13:58:11.503491
+Create Date: 2026-03-11 14:31:04.340408
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c0ebe140223c'
+revision: str = '85723c387107'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -70,7 +70,7 @@ def upgrade() -> None:
     sa.Column('claim_id', sa.BigInteger(), nullable=False),
     sa.Column('approver_id', sa.BigInteger(), nullable=False),
     sa.Column('decision', sa.Enum('APPROVED', 'REJECTED', name='approvaldecision'), nullable=False),
-    sa.Column('reason', sa.Text(), nullable=True),
+    sa.Column('summary', sa.Text(), nullable=True),
     sa.Column('decided_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['approver_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['claim_id'], ['claim_insurances.id'], ),
@@ -81,7 +81,7 @@ def upgrade() -> None:
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('claim_id', sa.BigInteger(), nullable=False),
     sa.Column('verifier_id', sa.BigInteger(), nullable=False),
-    sa.Column('review_summary', sa.Text(), nullable=False),
+    sa.Column('summary', sa.Text(), nullable=False),
     sa.Column('reviewed_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['claim_id'], ['claim_insurances.id'], ),
     sa.ForeignKeyConstraint(['verifier_id'], ['users.id'], ),

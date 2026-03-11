@@ -5,11 +5,7 @@ export const insuranceSchema = z.object({
   id: z.number(),
   number: z.string(),
   title: z.string(),
-  description: z.string(),
-  priority: z.number().min(1).max(5),
-  amount: z.number(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  description: z.string().nullable(),
 });
 
 export type Insurance = z.infer<typeof insuranceSchema>;

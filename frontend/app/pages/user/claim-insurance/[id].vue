@@ -96,6 +96,14 @@
 
 <script setup lang="ts">
 import type { Claim, UpdateClaimInput } from "~/shared/types";
+import AppBar from "~/components/ui/AppBar.vue";
+import SideNav from "~/components/ui/SideNav.vue";
+import StatusChip from "~/components/ui/StatusChip.vue";
+import ClaimForm from "~/components/form/ClaimForm.vue";
+import ClaimDetailView from "~/components/pages/ClaimDetailView.vue";
+import { useAuth } from "~/composables/useAuth";
+import { useClaims } from "~/composables/useClaims";
+import { useRouter, useRoute } from "vue-router";
 
 definePageMeta({
   middleware: ["auth"],

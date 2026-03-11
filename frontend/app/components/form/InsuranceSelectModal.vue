@@ -45,22 +45,12 @@
             <v-list-item-subtitle>
               {{ insurance.number }}
             </v-list-item-subtitle>
-            <v-list-item-subtitle class="text-body-2">
+            <v-list-item-subtitle v-if="insurance.description" class="text-body-2">
               {{ insurance.description }}
             </v-list-item-subtitle>
 
             <template #append>
-              <div class="text-right">
-                <div class="text-h6 text-primary font-weight-bold">
-                  {{ formatCurrency(insurance.amount) }}
-                </div>
-                <v-chip
-                  size="x-small"
-                  :color="getPriorityColor(insurance.priority)"
-                >
-                  Priority {{ insurance.priority }}
-                </v-chip>
-              </div>
+              <v-icon icon="mdi-chevron-right" color="grey" />
             </template>
           </v-list-item>
 
@@ -122,22 +112,9 @@ const filteredInsurances = computed(() => {
     (ins) =>
       ins.title.toLowerCase().includes(query) ||
       ins.number.toLowerCase().includes(query) ||
-      ins.description.toLowerCase().includes(query)
+      (ins.description?.toLowerCase().includes(query) ?? false)
   );
 });
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-};
-
-const getPriorityColor = (priority: number) => {
-  if (priority <= 2) return "error";
-  if (priority <= 3) return "warning";
-  return "success";
-};
 
 const handleClose = () => {
   selected.value = null;

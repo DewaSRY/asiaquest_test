@@ -26,6 +26,8 @@
             <v-tabs-window v-model="tab">
               <!-- Login Form -->
               <v-tabs-window-item value="login">
+                <v-divider class="pa-2" />
+
                 <v-form ref="loginFormRef" @submit.prevent="handleLogin">
                   <v-text-field
                     v-model="loginForm.email"
@@ -44,7 +46,9 @@
                     :type="showPassword ? 'text' : 'password'"
                     variant="outlined"
                     prepend-inner-icon="mdi-lock"
-                    :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    :append-inner-icon="
+                      showPassword ? 'mdi-eye-off' : 'mdi-eye'
+                    "
                     :rules="[rules.required, rules.minLength(8)]"
                     :disabled="loading"
                     @click:append-inner="showPassword = !showPassword"
@@ -66,6 +70,7 @@
 
               <!-- Register Form -->
               <v-tabs-window-item value="register">
+                <v-divider class="pa-2" />
                 <v-form ref="registerFormRef" @submit.prevent="handleRegister">
                   <v-text-field
                     v-model="registerForm.username"
@@ -94,7 +99,9 @@
                     :type="showPassword ? 'text' : 'password'"
                     variant="outlined"
                     prepend-inner-icon="mdi-lock"
-                    :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    :append-inner-icon="
+                      showPassword ? 'mdi-eye-off' : 'mdi-eye'
+                    "
                     :rules="[rules.required, rules.minLength(8)]"
                     :disabled="loading"
                     @click:append-inner="showPassword = !showPassword"
@@ -125,9 +132,7 @@
         >
           {{ snackbar.message }}
           <template #actions>
-            <v-btn variant="text" @click="snackbar.show = false">
-              Close
-            </v-btn>
+            <v-btn variant="text" @click="snackbar.show = false"> Close </v-btn>
           </template>
         </v-snackbar>
       </v-col>
@@ -198,10 +203,10 @@ const handleLogin = async () => {
   try {
     await login(loginForm);
     showMessage("Login successful!");
-    
+
     // Wait for user data to be loaded
     await nextTick();
-    
+
     if (userRole.value) {
       redirectBasedOnRole(userRole.value);
     }

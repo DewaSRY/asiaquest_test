@@ -1,0 +1,3 @@
+- [x] make mvp
+- [] make clean code 
+- [] make history record tracking 

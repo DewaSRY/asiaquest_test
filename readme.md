@@ -10,6 +10,8 @@ Application of claim insurance simulation.
 | database | postgres | 
 | dev tools | docker-compose | 
 
+- [backend architecture ](./docs/backend_architecture.md)
+- [frontend architecture ](./docs/frontend_architecture.md)
 
 
 ## How to setup application 
